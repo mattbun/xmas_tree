@@ -8,7 +8,7 @@ void setup() {
   initDisplay();
   initSerial();
   initWifi(WIFI_SSID, WIFI_PASSWORD); // Configured in src/secrets.h
-  initOTA();
+  initOTA(true); // If false, call ArduinoOTA.handle() in loop()
 
   displayMessage(WiFi.localIP().toString());
 

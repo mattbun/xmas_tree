@@ -20,12 +20,6 @@ SSD1306Wire display(0x3c, 5, 4);
 // Use this to stop doing things when an OTA is in progress
 bool otaInProgress = false;
 
-void otaLoop(void *pvParameters) {
-  while (1) {
-    ArduinoOTA.handle();
-  }
-}
-
 void displayMessage(String message) {
   display.clear();
   display.setFont(ArialMT_Plain_10);
@@ -66,7 +60,13 @@ void initWifi(const char ssid[], const char password[]) {
   Serial.println(WiFi.localIP());
 }
 
-void initOTA() {
+void otaLoop(void *pvParameters) {
+  while (1) {
+    ArduinoOTA.handle();
+  }
+}
+
+void initOTA(bool runInBackground) {
 
   // Port defaults to 3232
   // ArduinoOTA.setPort(3232);
@@ -122,9 +122,9 @@ void initOTA() {
     otaInProgress = false;
   });
 
-  //xTaskCreatePinnedToCore(otaLoop, "otaLoop", 4096, NULL, 1, NULL, ARDUINO_RUNNING_CORE);
-  // Running on core 0 makes it reboot over and over
-  xTaskCreatePinnedToCore(otaLoop, "otaLoop", 4096, NULL, 1, NULL, ARDUINO_RUNNING_CORE);
-
-  Serial.println("Watching for OTA updates on core " + ARDUINO_RUNNING_CORE);
+  if (runInBackground) {
+    // Running on core 0 makes it reboot over and over
+    xTaskCreatePinnedToCore(otaLoop, "otaLoop", 4096, NULL, 1, NULL, ARDUINO_RUNNING_CORE);
+    Serial.println("Watching for OTA updates on core " + ARDUINO_RUNNING_CORE);
+  }
 }

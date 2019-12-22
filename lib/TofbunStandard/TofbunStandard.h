@@ -1,6 +1,6 @@
 extern bool otaInProgress;
 
-void initOTA();
+void initOTA(bool runInBackground);
 
 void initDisplay();
 
