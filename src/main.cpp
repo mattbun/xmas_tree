@@ -21,6 +21,7 @@ String mode = "rainbow";
 int delayTime = 10;
 bool allowOTA = true;
 bool active = true;
+uint32_t solidColor = 0xFF0000;
 
 void messageReceived(String &topic, String &payload) {
   if (payload == 0) {
@@ -63,6 +64,8 @@ void messageReceived(String &topic, String &payload) {
     } else if (payload.equals("on") || payload.equals("1")) {
       allowOTA = true;
     }
+  } else if (topic.equals("/xmas_tree/color")) {
+    sscanf(payload.c_str(), "#%6x", &solidColor);
   }
 }
 
@@ -87,12 +90,14 @@ void setup() {
   mqttClient.subscribe("/xmas_tree/mode");
   mqttClient.subscribe("/xmas_tree/delay");
   mqttClient.subscribe("/xmas_tree/allow_ota");
+  mqttClient.subscribe("/xmas_tree/color");
 
   mqttClient.publish("/xmas_tree", "on");
   mqttClient.publish("/xmas_tree/brightness", String(currentBrightness));
   mqttClient.publish("/xmas_tree/mode", mode);
   mqttClient.publish("/xmas_tree/delay", String(delayTime));
   mqttClient.publish("/xmas_tree/allow_ota", allowOTA ? "1" : "0");
+  mqttClient.publish("/xmas_tree/color", "#" + String(solidColor, HEX));
 
   displayMessage("Merry Christmas!");
 
@@ -123,10 +128,14 @@ void loop() {
   }
 
   // Now actually change the lights
-  if (mode.equals("solid")) {
+  if (mode.equals("classic")) {
     for(int i=0; i<strip.numPixels(); i++) { // For each pixel in strip...
       int pixelHue = firstPixelHue + (65536L / strip.numPixels());
       strip.setPixelColor(i, strip.gamma32(strip.ColorHSV(pixelHue)));
+    }
+  } else if (mode.equals("solid")) {
+    for(int i=0; i<strip.numPixels(); i++) { // For each pixel in strip...
+      strip.setPixelColor(i, solidColor);
     }
   } else {  // Rainbow
     for(int i=0; i<strip.numPixels(); i++) { // For each pixel in strip...
