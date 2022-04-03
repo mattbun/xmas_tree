@@ -106,6 +106,8 @@ void setup() {
   strip.setBrightness(currentBrightness);
 }
 
+int iterator = 0;
+int increment = 256;
 int firstPixelHue = 0;
 
 void loop() {
@@ -137,6 +139,15 @@ void loop() {
     for(int i=0; i<strip.numPixels(); i++) { // For each pixel in strip...
       strip.setPixelColor(i, solidColor);
     }
+  } else if (mode.equals("spring")) {
+    iterator += increment;
+
+    if (iterator <= 0 || iterator >= 5*65536) {
+      increment = increment * -1;
+    }
+ 
+    int pixelHue = (65536L / 3) - ((iterator / 5) / 6);
+    strip.fill(strip.gamma32(strip.ColorHSV(pixelHue)));
   } else {  // Rainbow
     for(int i=0; i<strip.numPixels(); i++) { // For each pixel in strip...
       int pixelHue = firstPixelHue + (i * 65536L / strip.numPixels());
