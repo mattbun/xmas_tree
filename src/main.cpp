@@ -66,6 +66,8 @@ void messageReceived(String &topic, String &payload) {
     }
   } else if (topic.equals("/xmas_tree/color")) {
     sscanf(payload.c_str(), "#%6x", &solidColor);
+  } else if (topic.equals("/xmas_tree/message")) {
+    displayMessage(payload);
   }
 }
 
@@ -91,6 +93,7 @@ void setup() {
   mqttClient.subscribe("/xmas_tree/delay");
   mqttClient.subscribe("/xmas_tree/allow_ota");
   mqttClient.subscribe("/xmas_tree/color");
+  mqttClient.subscribe("/xmas_tree/message");
 
   mqttClient.publish("/xmas_tree", "on");
   mqttClient.publish("/xmas_tree/brightness", String(currentBrightness));
@@ -98,8 +101,6 @@ void setup() {
   mqttClient.publish("/xmas_tree/delay", String(delayTime));
   mqttClient.publish("/xmas_tree/allow_ota", allowOTA ? "1" : "0");
   mqttClient.publish("/xmas_tree/color", "#" + String(solidColor, HEX));
-
-  displayMessage("Merry Christmas!");
 
   strip.begin();
   strip.show();
