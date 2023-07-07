@@ -81,7 +81,7 @@ void setup() {
   mqttClient.onMessage(messageReceived);
 
   displayMessage("Starting mqtt...");
-  while (!mqttClient.connect("arduino", "try", "try")) {
+  while (!mqttClient.connect("xmas-tree")) {
     delay(1000);
   }
 
