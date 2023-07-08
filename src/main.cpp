@@ -95,7 +95,7 @@ void setup() {
   mqttClient.subscribe("/xmas_tree/color");
   mqttClient.subscribe("/xmas_tree/message");
 
-  mqttClient.publish("/xmas_tree", "on");
+  mqttClient.publish("/xmas_tree", "1");
   mqttClient.publish("/xmas_tree/brightness", String(currentBrightness));
   mqttClient.publish("/xmas_tree/mode", mode);
   mqttClient.publish("/xmas_tree/delay", String(delayTime));
